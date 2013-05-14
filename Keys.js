@@ -1,7 +1,6 @@
-var Keys = function(game){
+var Keys = function(){
 	this.logKeys = true;
 	this.anyKey = false;
-	this.game = game;
 	
 	this.pressedKeys = {
 		UP: false,
@@ -12,7 +11,7 @@ var Keys = function(game){
 		S: 	   false
 	};
 	this.keys = {
-		UP: 38,
+		UP: 32,
 		DOWN: 40,
 		LEFT: 37,
 		RIGHT: 39,
@@ -24,26 +23,27 @@ var Keys = function(game){
 Keys.prototype.log = function(key, action) {
 	console.log(key + "," + up);
 }
+
 Keys.prototype.onKeyDown = function(e) {
 	k = e.keyCode;
-	
-	game.keys.anyKey = true;
-	for(var i in game.keys.keys) {
-		if(k === game.keys.keys[i]) {
+	console.log(k);
+	this.anyKey = true;
+	for(var i in this.keys) {
+		if(k === this.keys[i]) {
 			e.preventDefault();
-			game.keys.pressedKeys[i] = true;
+			this.pressedKeys[i] = true;
 		}
 	}
 }
 
 Keys.prototype.onKeyUp = function(e) {
 	k = e.keyCode;
-	game.keys.anyKey = false;
+	this.anyKey = false;
 	
-	for(var i in game.keys.keys) {
-		if(k === game.keys.keys[i]) {
+	for(var i in this.keys) {
+		if(k === this.keys[i]) {
 			e.preventDefault();
-			game.keys.pressedKeys[i] = false;
+			this.pressedKeys[i] = false;
 		}
 	}
 }

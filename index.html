@@ -13,9 +13,17 @@
 </head>
 <body>
 	<script src="three.min.js"></script>
+	<script src="Keys.js"></script>
 	<script src="Player.js"></script>
 	<script type="text/javascript">
 			// Global variables
+			var keys = new Keys();
+			window.onkeydown = function(e){
+				keys.onKeyDown(e);
+			}
+			window.onkeyup = function(e){
+				keys.onKeyUp(e);
+			}
 			var tempRot = 0.05;
 			var cubeRotation = 90;
 			var cameraDistance = 500;
@@ -25,7 +33,7 @@
 			var camera = new THREE.CombinedCamera( window.innerWidth / 2, window.innerHeight / 2, 70, 1, 1000, - 500, 1000 );
 			//var cameraOrtho = new THREE.OrthographicCamera(0,window.innerWidth,0,window.innerHeigt, 1, 2000);
 			camera.position.z = 300;
-			camera.position.y = 300;
+			camera.position.y = 100;
 			camera.lookAt(scene.position);
 			var renderer = new THREE.WebGLRenderer();
 			renderer.setSize(window.innerWidth, window.innerHeight);
@@ -84,7 +92,9 @@
 			function rotateAroundScene(angle){
 				angle = degToRad(angle);
 			}
+
 			
+			/*
 			window.onkeydown = function(e){
 				if(e.keyCode === 32){
 					if(toggle){
@@ -118,7 +128,7 @@
 					
 				}
 			};
-			
+			*/
 			render();
 
 	</script>

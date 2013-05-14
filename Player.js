@@ -1,8 +1,8 @@
-console.log(THREE.CubeGeometry);
+
 function Player(scene) {
 	this.scene = scene;
 	this.side = 32;
-	this.gravity = 0.15;
+	this.gravity = 0.20;
 	this.speed = -2;
 	this.collisionDistance = this.side/2;
 	this.onFloor = false;
@@ -11,6 +11,7 @@ function Player(scene) {
 	this.material = new THREE.MeshBasicMaterial({color: 0xAAAAAA});
 	this.mesh = new THREE.Mesh(geometry,material);
 	this.mesh.position.y = 100;
+	JUMP = 'UP';
 }
 
 Player.prototype.init = function(){
@@ -19,6 +20,8 @@ Player.prototype.init = function(){
 	
 }
 Player.prototype.update = function(){
+	this.controls();
+	this.mesh.position.y += this.speed;
 	if(this.onFloor){
 		this.speed = 0;
 	}
@@ -26,7 +29,7 @@ Player.prototype.update = function(){
 		this.speed -= this.gravity;
 	}
 	this.collisions();
-	this.mesh.position.y += this.speed;
+	
 }
 
 Player.prototype.collisions = function(){
@@ -48,6 +51,15 @@ Player.prototype.collisions = function(){
 	}
 }
 
+Player.prototype.controls = function(){
+	if(keys.pressedKeys[JUMP]){
+		if(!this.jumping){
+			this.jumping = true;
+			this.onFloor = false;
+			this.speed = 4.5;
+		}
+	}
+}
 /*Entity.prototype.outsideScreen = function() {
     return (this.x > this.game.halfSurfaceWidth || this.x < -(this.game.halfSurfaceWidth) ||
         this.y > this.game.halfSurfaceHeight || this.y < -(this.game.halfSurfaceHeight));

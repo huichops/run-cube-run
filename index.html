@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		body {
+			font-family: Monospace;
+			background-color: #eee;
+			margin: 0px;
+			overflow: hidden;
+		}
+	</style>
+
+</head>
+<body>
+	<script src="three.min.js"></script>
+	<script src="Player.js"></script>
+	<script type="text/javascript">
+			// Global variables
+			var tempRot = 0.05;
+			var cubeRotation = 90;
+			var cameraDistance = 500;
+			var toggle = true;
+			// Scene variables
+			var scene = new THREE.Scene();
+			var camera = new THREE.CombinedCamera( window.innerWidth / 2, window.innerHeight / 2, 70, 1, 1000, - 500, 1000 );
+			//var cameraOrtho = new THREE.OrthographicCamera(0,window.innerWidth,0,window.innerHeigt, 1, 2000);
+			camera.position.z = 300;
+			camera.position.y = 300;
+			camera.lookAt(scene.position);
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			document.body.appendChild(renderer.domElement);
+
+			var geometry = new THREE.CubeGeometry(30,30,30,1,1,1);
+			var material = new THREE.MeshLambertMaterial({color: 0x555555});
+			var wireFrame = new THREE.MeshBasicMaterial({color: 0xffffff, 
+														wireframe: true,
+														wireframeLinewidth: 2});
+			var multiMaterial = [ material, wireFrame ];
+			var material2 = new THREE.MeshLambertMaterial({color: 0x000088});
+			var material3 = new THREE.MeshLambertMaterial({color: 0x880000});
+			
+			var multiMaterial2 = [ material2, wireFrame ];
+										
+			var piso = new THREE.SceneUtils.createMultiMaterialObject(
+					new THREE.CubeGeometry(2000,10,100,1,1,1),multiMaterial);
+			piso.position.x = 900;
+			scene.add(piso);
+			
+			/*var lineMaterial = new THREE.LineBasicMaterial({
+					color: 0xff0000
+			});
+				
+			var lineGeometry = new THREE.Geometry();
+			lineGeometry.vertices.push(player.position);
+			lineGeometry.vertices.push(direction);
+			var line = new THREE.Line(lineGeometry, lineMaterial);
+			scene.add(line);*/
+			cone = new THREE.CylinderGeometry(0, 20,40,50,50, false);
+			var spike  = new THREE.Mesh(cone, material3);
+			spike.position.y = 20;
+			scene.add(spike);
+
+			var light = new THREE.PointLight(0x404040, 50, 300);
+			light.position.y = 200;
+			light.position.z = 100;
+			scene.add(light);
+			var bulb = new THREE.Mesh(new THREE.SphereGeometry(10,16,8),
+									  new THREE.MeshBasicMaterial({color: 0xffaa00}));
+			scene.add(bulb);
+			bulb.position = light.position;
+			
+			var player = new Player(scene);
+			player.init();
+			
+			var render = function () {
+				requestAnimationFrame(render);
+				player.update();
+				renderer.render(scene, camera);
+			};
+			function degToRad(angle){
+				return deg * Math.PI / 180;
+			}
+			function rotateAroundScene(angle){
+				angle = degToRad(angle);
+			}
+			
+			window.onkeydown = function(e){
+				if(e.keyCode === 32){
+					if(toggle){
+						camera.toOrthographic();
+						//console.log('ortho');
+						toggle = !toggle;
+					}
+					else {
+						camera.toPerspective();
+						//console.log('pers');
+						toggle = !toggle;
+					}
+				}
+				
+				if(e.keyCode === 87) {
+					//console.log('jump');
+					if(!player.jumping){
+						player.jumping = true;
+						player.onFloor = false;
+						player.speed = 4;
+					}
+				}
+				if(e.keyCode == 68) {
+					//console.log('right');
+					player.mesh.position.x += 5;
+				}
+				
+				if(e.keyCode == 65) {
+					//console.log('left');
+					player.mesh.position.x -= 5;
+					
+				}
+			};
+			
+			render();
+
+	</script>
+</body>
+</html>

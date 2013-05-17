@@ -13,9 +13,13 @@
 </head>
 <body>
 	<script src="three.min.js"></script>
+	<script src=requestAnimationFrame.js></script>
 	<script src="Keys.js"></script>
+	<script src="Tile.js"></script>
 	<script src="Player.js"></script>
 	<script type="text/javascript">
+		
+		
 			// Global variables
 			var keys = new Keys();
 			window.onkeydown = function(e){
@@ -26,7 +30,6 @@
 			}
 			var tempRot = 0.05;
 			var cubeRotation = 90;
-			var cameraDistance = 500;
 			var toggle = true;
 			// Scene variables
 			var scene = new THREE.Scene();
@@ -45,44 +48,33 @@
 														wireframe: true,
 														wireframeLinewidth: 2});
 			var multiMaterial = [ material, wireFrame ];
-			var material2 = new THREE.MeshLambertMaterial({color: 0x000088});
-			var material3 = new THREE.MeshLambertMaterial({color: 0x880000});
-			
-			var multiMaterial2 = [ material2, wireFrame ];
+
 										
 			var piso = new THREE.SceneUtils.createMultiMaterialObject(
 					new THREE.CubeGeometry(2000,10,100,1,1,1),multiMaterial);
 			piso.position.x = 900;
 			scene.add(piso);
-			
-			/*var lineMaterial = new THREE.LineBasicMaterial({
-					color: 0xff0000
-			});
-				
-			var lineGeometry = new THREE.Geometry();
-			lineGeometry.vertices.push(player.position);
-			lineGeometry.vertices.push(direction);
-			var line = new THREE.Line(lineGeometry, lineMaterial);
-			scene.add(line);*/
-			cone = new THREE.CylinderGeometry(0, 20,40,50,50, false);
+
+			/*cone = new THREE.CylinderGeometry(0, 20,40,50,50, false);
 			var spike  = new THREE.Mesh(cone, material3);
 			spike.position.y = 20;
-			scene.add(spike);
-
-			var light = new THREE.PointLight(0x404040, 50, 300);
-			light.position.y = 200;
-			light.position.z = 100;
-			scene.add(light);
-			var bulb = new THREE.Mesh(new THREE.SphereGeometry(10,16,8),
-									  new THREE.MeshBasicMaterial({color: 0xffaa00}));
-			scene.add(bulb);
-			bulb.position = light.position;
+			scene.add(spike);*/
 			
 			var player = new Player(scene);
 			player.init();
 			
+			var tiles = [];
+			var tileCount = 5;
+			var limit = tileCount*32;
+			for(var i=0; i<=limit; i+=32){
+				var tile = new Tile(scene);
+				tile.init(i, 20, 0);
+				tiles.push(tile.mesh);
+			}
+			console.log(tiles);
+			
 			var render = function () {
-				requestAnimationFrame(render);
+				requestAnimFrame(render);
 				player.update();
 				renderer.render(scene, camera);
 			};
@@ -92,43 +84,7 @@
 			function rotateAroundScene(angle){
 				angle = degToRad(angle);
 			}
-
 			
-			/*
-			window.onkeydown = function(e){
-				if(e.keyCode === 32){
-					if(toggle){
-						camera.toOrthographic();
-						//console.log('ortho');
-						toggle = !toggle;
-					}
-					else {
-						camera.toPerspective();
-						//console.log('pers');
-						toggle = !toggle;
-					}
-				}
-				
-				if(e.keyCode === 87) {
-					//console.log('jump');
-					if(!player.jumping){
-						player.jumping = true;
-						player.onFloor = false;
-						player.speed = 4;
-					}
-				}
-				if(e.keyCode == 68) {
-					//console.log('right');
-					player.mesh.position.x += 5;
-				}
-				
-				if(e.keyCode == 65) {
-					//console.log('left');
-					player.mesh.position.x -= 5;
-					
-				}
-			};
-			*/
 			render();
 
 	</script>

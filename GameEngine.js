@@ -32,7 +32,7 @@ GameEngine.prototype.start = function() {
 GameEngine.prototype.loop = function(){
 	this.clockTick = this.timer.tick();
 	this.update();
-	this.render();
+	this.draw();
 }
 
 GameEngine.prototype.addEntity = function(entity) {
@@ -57,7 +57,7 @@ GameEngine.prototype.update = function(){
     }
 }
 
-GameEngine.prototype.render = function(callback) {
+GameEngine.prototype.draw = function(callback) {
     
     //this.ctx.save();
     //this.ctx.translate(this.ctx.canvas.width/2, this.ctx.canvas.height/2);

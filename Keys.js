@@ -8,7 +8,9 @@ var Keys = function(){
 		LEFT: false,
 		RIGHT: false,
 		W: 	   false,
-		S: 	   false
+		S: 	   false,
+		A: 	   false,
+		D: 	   false
 	};
 	this.keys = {
 		UP: 32,
@@ -16,7 +18,9 @@ var Keys = function(){
 		LEFT: 37,
 		RIGHT: 39,
 		W:     87,
-		S:     83
+		S:     83,
+		A: 	   65,
+		D: 	   68
 	};
 }
 
@@ -26,7 +30,7 @@ Keys.prototype.log = function(key, action) {
 
 Keys.prototype.onKeyDown = function(e) {
 	k = e.keyCode;
-	console.log(k);
+
 	this.anyKey = true;
 	for(var i in this.keys) {
 		if(k === this.keys[i]) {

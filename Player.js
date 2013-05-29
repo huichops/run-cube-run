@@ -13,6 +13,7 @@ function Player(scene) {
 	this.material = new THREE.MeshNormalMaterial();
 	this.mesh = new THREE.Mesh(this.geometry,this.material);
 	this.mesh.position.y = 100;
+	this.mesh.position.x = 100;
 	JUMP = 'UP';
 	LEFT = 'A';
 	RIGHT = 'D';
@@ -57,41 +58,79 @@ Player.prototype.collisions = function(){
 		new THREE.Vector3(0,-1,0),
 		new THREE.Vector3(0,1,0),
 		new THREE.Vector3(1,0,0),
-		new THREE.Vector3(-1,0,0),
+		new THREE.Vector3(-1,0,0)
 		
 	];
+	var positions = [];
+	var cambio = [-1, 10, -10, 10];
+	var axis = true;
+	for( var i = 0; i < 4; i++ ){
+		var player_center = this.mesh.position.clone();
+		(function( i ){
+			if( i > 1 ) axis = false;
+			if( axis ){
+				player_center.x = player_center.x + cambio[i];
+				
+			}
+			else {
+				player_center.y = player_center.y + cambio[i];
+			}
+			
+			positions[i] = player_center;
+			
+			
+		})(i);
+	}
+	
+	
 	caster = new THREE.Raycaster();
 	
 	for(var i = 0; i < directions.length; i++){
-		caster.set( this.mesh.position, directions[i] );
-		
-		collisions = caster.intersectObjects(tiles);
-		if( collisions.length > 0 && 
-			collisions[0].distance <= this.collisionDistance ){			
-			switch(i){
-				case 0:
-					this.jumping = false;
-					this.onFloor = true;
-					this.mesh.position.y = collisions[0].object.position.y + 32;
-					console.log("down");
-					break;
-					
-				case 1:
-					this.mesh.position.y = collisions[0].object.position.y - 32;	
-					console.log("up");
-					break;
-				case 2:
-					console.log("right", collisions[0]);
-					console.log(this.collisionDistance);
-					this.mesh.position.x = collisions[0].object.position.x - 32;
-					break;
-				case 3:
-					console.log("left", collisions[0].distance);
-					this.mesh.position.x = collisions[0].object.position.x + 32;
-					break;
-			}
-			
+		var j, limit;
+		if( i > 1 ){
+			j = 2;
+			limit = 4;
 		}
+		else {
+			j = 0;
+			limit = 2;
+		}
+		
+		for( j; j < limit; j++ ){
+			caster.set( positions[j], directions[i] );
+		
+			collisions = caster.intersectObjects(tiles);
+			if( collisions.length > 0 && 
+				collisions[0].distance <= this.collisionDistance ){			
+				switch(i){
+					case 0:
+						this.jumping = false;
+						this.onFloor = true;
+						this.mesh.position.y = collisions[0].object.position.y + 32.1;
+						
+						//console.log("down");
+						break;
+						
+					case 1:
+						this.mesh.position.y = collisions[0].object.position.y - 32.1;
+						//console.log("up");
+						this.speed = 0;
+						break;
+					case 2:
+						console.log(positions[j], directions[i], player.mesh.position);
+						console.log(collisions[0]);
+						this.mesh.position.x = collisions[0].object.position.x - 32.1;
+						console.log(positions[j], directions[i], player.mesh.position);
+						break;
+					case 3:
+						//console.log("left", collisions[0].distance);
+						this.mesh.position.x = collisions[0].object.position.x + 32.1;
+						break;
+				}
+				
+			}
+		}
+	
 	}
 	
 }

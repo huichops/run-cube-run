@@ -3,7 +3,7 @@ function Player(scene) {
 	this.scene = scene;
 	this.side = 32;
 	this.gravity = 0.20;
-	this.moveSpeed = 3;
+	this.moveSpeed = 2;
 	this.speed = -2;
 	this.collisionDistance = this.side/2;
 	this.onFloor = false;
@@ -13,7 +13,7 @@ function Player(scene) {
 	this.material = new THREE.MeshNormalMaterial();
 	this.mesh = new THREE.Mesh(this.geometry,this.material);
 	this.mesh.position.y = 100;
-	this.mesh.position.x = 100;
+	this.mesh.position.x = -100;
 	JUMP = 'UP';
 	LEFT = 'A';
 	RIGHT = 'D';
@@ -31,7 +31,7 @@ Player.prototype.update = function(){
 	if(this.onFloor){
 		this.speed = 0;
 	}
-	else{
+	else if(this.speed > -5){
 		this.speed -= this.gravity;
 	}
 
@@ -62,7 +62,7 @@ Player.prototype.collisions = function(){
 		
 	];
 	var positions = [];
-	var cambio = [-1, 10, -10, 10];
+	var cambio = [-10, 10, -10, 10];
 	var axis = true;
 	for( var i = 0; i < 4; i++ ){
 		var player_center = this.mesh.position.clone();
@@ -99,7 +99,7 @@ Player.prototype.collisions = function(){
 		for( j; j < limit; j++ ){
 			caster.set( positions[j], directions[i] );
 		
-			collisions = caster.intersectObjects(tiles);
+			collisions = caster.intersectObjects(obstacles, true);
 			if( collisions.length > 0 && 
 				collisions[0].distance <= this.collisionDistance ){			
 				switch(i){

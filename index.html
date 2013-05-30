@@ -13,9 +13,10 @@
 </head>
 <body>
 	<script src="three.min.js"></script>
-	<script src=requestAnimationFrame.js></script>
+	<script src="requestAnimationFrame.js"></script>
 	<script src="Keys.js"></script>
 	<script src="Tile.js"></script>
+	<script src="Spike.js"></script>
 	<script src="Player.js"></script>
 	<script type="text/javascript">
 		
@@ -51,8 +52,8 @@
 
 										
 			var piso = new THREE.SceneUtils.createMultiMaterialObject(
-					new THREE.CubeGeometry(2000,10,100,1,1,1),multiMaterial);
-			piso.position.x = 900;
+					new THREE.CubeGeometry(1500,10,100,1,1,1),multiMaterial);
+			piso.position.x = 0;
 			scene.add(piso);
 
 			/*cone = new THREE.CylinderGeometry(0, 20,40,50,50, false);
@@ -64,19 +65,28 @@
 			player.init();
 			
 			var tiles = [];
-			var tileCount = 2;
+			var tileCount = 3;
 			var limit = tileCount*32;
-			for(var i=0; i<=limit; i+=32){
+			var obstacles = [];
+			for(var i=0; i<limit; i+=32){
 				var tile = new Tile(scene);
 				tile.init(i, 20, 0);
-				tiles.push(tile.mesh);
+				tiles.push(tile);
+				obstacles.push(tile.mesh);
 			}
-			tiles[0].position.y = 70;
+			tiles[2].mesh.position.y = 68;
+			tiles[2].mesh.position.x += 20;
+			var spike = new Spike(scene);
+			spike.init(400,20,0);
 			var render = function () {
 				requestAnimFrame(render);
 				player.update();
+				for(var i=0; i<tileCount; i++){
+					tiles[i].update();
+				}
+				spike.update();
 				renderer.render(scene, camera);
-				camera.position.x = player.mesh.position.x;
+				camera.position.x = player.mesh.position.x + 100;
 			};
 			function degToRad(angle){
 				return deg * Math.PI / 180;

@@ -12,11 +12,17 @@ function Tile(scene) {
 }
 
 Tile.prototype.init = function(x, y, z){
-
+	var random = Math.random();
+	if ( random < 0.9 ){
+		var yy = 19;
+	}
+	else{
+		var yy = 45;
+	}
 	this.mesh.position.x = x || 0;
-	this.mesh.position.y = y || 0;
+	this.mesh.position.y = yy || 0;
 	this.mesh.position.z = z || 0;
-
+	
 	scene.add(this.mesh);
 }
 

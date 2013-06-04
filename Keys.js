@@ -10,7 +10,8 @@ var Keys = function(){
 		W: 	   false,
 		S: 	   false,
 		A: 	   false,
-		D: 	   false
+		D: 	   false,
+		CTRL: false
 	};
 	this.keys = {
 		UP: 32,
@@ -20,7 +21,8 @@ var Keys = function(){
 		W:     87,
 		S:     83,
 		A: 	   65,
-		D: 	   68
+		D: 	   68,
+		CTRL:  17
 	};
 }
 

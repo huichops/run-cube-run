@@ -2,11 +2,14 @@
 function Player(scene) {
 	this.scene = scene;
 	this.side = 32;
+	this.heightSmall = 24;
 	this.gravity = 0.25;
 	this.speed = -2.5;
 	this.collisionDistance = this.side/2;
 	this.onFloor = false;
 	this.jumping = true;
+	this.scaleSpeed = 0.2;
+	this.scale = 1;
 	this.geometry = new THREE.CubeGeometry(this.side,this.side,this.side,1,1,1);
 	//this.material = new THREE.MeshNormalMaterial();
 	this.material = new THREE.MeshNormalMaterial();
@@ -16,6 +19,7 @@ function Player(scene) {
 	JUMP = 'UP';
 	LEFT = 'A';
 	RIGHT = 'D';
+	SMALL = 'CTRL';
 }
 
 Player.prototype.init = function(){
@@ -35,6 +39,7 @@ Player.prototype.update = function(){
 	}
 
 	this.collisions();
+	this.mesh.scale.setY(this.scale);
 	
 }
 
@@ -151,10 +156,23 @@ Player.prototype.controls = function(){
 	if(keys.pressedKeys[RIGHT]){
 		Tile.speed = Tile.fast;
 	}
+	
+	if(keys.pressedKeys[SMALL] && this.scale > 0.75 ){
+		this.scale -= this.scaleSpeed;
+		this.side = this.heightSmall;
+		this.collisionDistance = 12;
+		
+	}
+	else if (this.scale < 1 && !keys.pressedKeys[SMALL] ) {
+		this.scale += this.scaleSpeed;
+		this.side = 32;
+		this.mesh.position.y = 21;
+		this.collisionDistance = 16;
+	}
 }
 
 Player.prototype.lose = function(){
-	console.log("lost");
+	console.log("lose");
 }
 /*Entity.prototype.outsideScreen = function() {
     return (this.x > this.game.halfSurfaceWidth || this.x < -(this.game.halfSurfaceWidth) ||

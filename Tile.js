@@ -1,8 +1,10 @@
 
 function Tile(scene) {
 	this.scene = scene;
-	Tile.side = 32;
-	this.speed = 2;
+	Tile.side = 24;
+	Tile.speed = 3.5;
+	Tile.slow = 2;
+	Tile.fast = 5;
 	this.geometry = new THREE.CubeGeometry(Tile.side,Tile.side,Tile.side,1,1,1);
 	//this.material = new THREE.MeshNormalMaterial();
 	this.material = new THREE.MeshBasicMaterial({color:0x00BB00});
@@ -19,7 +21,7 @@ Tile.prototype.init = function(x, y, z){
 }
 
 Tile.prototype.update = function(){
-	this.mesh.position.x -= this.speed;
+	this.mesh.position.x -= Tile.speed;
 }
 
 

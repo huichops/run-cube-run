@@ -65,26 +65,40 @@
 			player.init();
 			
 			var tiles = [];
-			var tileCount = 3;
-			var limit = tileCount*32;
 			var obstacles = [];
-			for(var i=0; i<limit; i+=32){
+
+			var time = 250;
+			function timer(){
 				var tile = new Tile(scene);
-				tile.init(i, 20, 0);
+
+				var random = Math.random();
+				console.log(random);
+				if( random < 0.26 ){
+					console.log("<");
+					time = 250;
+				}
+				if( random < 0.75 ){
+				console.log(">");
+					time = 750;
+				}
+				else {
+					time = 1000;
+				}
+				tile.init(200,12,0);
 				tiles.push(tile);
 				obstacles.push(tile.mesh);
+				window.setTimeout(timer, time);
+				
 			}
-			tiles[2].mesh.position.y = 68;
-			tiles[2].mesh.position.x += 20;
-			var spike = new Spike(scene);
-			spike.init(400,20,0);
+			window.setTimeout(timer, time);
+
 			var render = function () {
 				requestAnimFrame(render);
 				player.update();
-				for(var i=0; i<tileCount; i++){
+				for(var i=0; i<tiles.length; i++){
 					tiles[i].update();
 				}
-				spike.update();
+				
 				renderer.render(scene, camera);
 				camera.position.x = player.mesh.position.x + 100;
 			};

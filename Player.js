@@ -2,9 +2,8 @@
 function Player(scene) {
 	this.scene = scene;
 	this.side = 32;
-	this.gravity = 0.20;
-	this.moveSpeed = 2;
-	this.speed = -2;
+	this.gravity = 0.25;
+	this.speed = -2.5;
 	this.collisionDistance = this.side/2;
 	this.onFloor = false;
 	this.jumping = true;
@@ -101,8 +100,9 @@ Player.prototype.collisions = function(){
 		
 			collisions = caster.intersectObjects(obstacles, true);
 			if( collisions.length > 0 && 
-				collisions[0].distance <= this.collisionDistance ){			
-				switch(i){
+				collisions[0].distance <= this.collisionDistance ){
+				this.lose();
+				/*switch(i){
 					case 0:
 						this.jumping = false;
 						this.onFloor = true;
@@ -126,7 +126,7 @@ Player.prototype.collisions = function(){
 						//console.log("left", collisions[0].distance);
 						this.mesh.position.x = collisions[0].object.position.x + 32.1;
 						break;
-				}
+				}*/
 				
 			}
 		}
@@ -145,12 +145,16 @@ Player.prototype.controls = function(){
 	}
 	
 	if(keys.pressedKeys[LEFT]){
-		this.mesh.position.x -= this.moveSpeed;
+		Tile.speed = Tile.slow;
 	}
 	
 	if(keys.pressedKeys[RIGHT]){
-		this.mesh.position.x += this.moveSpeed;
+		Tile.speed = Tile.fast;
 	}
+}
+
+Player.prototype.lose = function(){
+	console.log("lost");
 }
 /*Entity.prototype.outsideScreen = function() {
     return (this.x > this.game.halfSurfaceWidth || this.x < -(this.game.halfSurfaceWidth) ||

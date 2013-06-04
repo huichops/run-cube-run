@@ -8,19 +8,66 @@
 			margin: 0px;
 			overflow: hidden;
 		}
+		#gameover {
+			position: absolute;
+			top: 35%;
+			left: 30%;
+			font-family: 'Monotype', 'Consolas', 'Lucida console';
+			font-size: 700%;
+			color: rgb(255,0,255);
+			opacity: 0;
+		}
+		#restart {
+			position: absolute;
+			top: 50%;
+			left: 32%;
+			font-family: 'Monotype', 'Consolas', 'Lucida console';
+			font-size: 300%;
+			color: rgb(155,0,200);
+			
+			opacity: 0;
+		}
+		
+		#score {
+			position: absolute;
+			top: 5%;
+			left: 5%;
+			font-family: 'Monotype', 'Consolas', 'Lucida console';
+			font-size: 300%;
+			color: rgb(255,220,0);
+		}
+		
 	</style>
 
 </head>
 <body>
+
 	<script src="three.min.js"></script>
 	<script src="requestAnimationFrame.js"></script>
 	<script src="Keys.js"></script>
 	<script src="Tile.js"></script>
 	<script src="Spike.js"></script>
 	<script src="Player.js"></script>
+
+<h1 id="gameover">
+	GAME OVER
+</h1>
+
+<h2 id="restart">
+	Press 'R' to restart
+</h2>
+
+<h2 id="score">
+	0
+</h2>
+</body>
 	<script type="text/javascript">
 		
-		
+			var gameover = document.getElementById('gameover');
+			var restart = document.getElementById('restart');
+			var score = document.getElementById('score');
+			var counter = 0;
+			
 			// Global variables
 			var keys = new Keys();
 			window.onkeydown = function(e){
@@ -29,6 +76,7 @@
 			window.onkeyup = function(e){
 				keys.onKeyUp(e);
 			}
+			var lost;
 			var tempRot = 0.05;
 			var cubeRotation = 90;
 			var toggle = true;
@@ -37,7 +85,7 @@
 			var camera = new THREE.CombinedCamera( window.innerWidth / 2, window.innerHeight / 2, 70, 1, 1000, - 500, 1000 );
 			//var cameraOrtho = new THREE.OrthographicCamera(0,window.innerWidth,0,window.innerHeigt, 1, 2000);
 			camera.position.z = 300;
-			camera.position.y = 100;
+			camera.position.y = 120;
 			camera.lookAt(scene.position);
 			var renderer = new THREE.WebGLRenderer();
 			renderer.setSize(window.innerWidth, window.innerHeight);
@@ -61,8 +109,7 @@
 			spike.position.y = 20;
 			scene.add(spike);*/
 			
-			var player = new Player(scene);
-			player.init();
+			var player;
 			
 			var tiles = [];
 			var obstacles = [];
@@ -70,37 +117,69 @@
 			var time = 250;
 			function timer(){
 				var tile = new Tile(scene);
-
+				tile.init();
+				
 				var random = Math.random();
-				console.log(random);
-				if( random < 0.26 ){
-					console.log("<");
-					time = 250;
+				
+				if( random < 0.10 ){
+					time = 450;
 				}
-				if( random < 0.75 ){
-				console.log(">");
+				else if( random < 0.30 ){
+					time = 500;
+				}
+				else if( random < 0.45 ){
+					time = 550;
+				}
+				
+				else if (random < 0.55 ){
+					time = 600;
+				}
+				
+				else if (random < 0.75 ){
+				
+					time = 650;
+				}
+				else if (random < 0.85 ){
 					time = 750;
 				}
-				else {
-					time = 1000;
+				
+				else if (random < 0.90 ){
+					time = 800;
 				}
-				tile.init(200,19,0);
+				
+				else if( random < 0.97 ){
+					time = 850
+				}
+				
+				else {
+					time = 900;
+				}
 				tiles.push(tile);
 				obstacles.push(tile.mesh);
 				window.setTimeout(timer, time);
 				
 			}
-			window.setTimeout(timer, time);
+			
 
 			var render = function () {
 				requestAnimFrame(render);
-				player.update();
+				if(!lost){
+					camera.position.x = player.mesh.position.x + 120;
+					player.update();
+					counter++;
+				}
 				for(var i=0; i<tiles.length; i++){
-					tiles[i].update();
+					tiles[i].update();					
+				}
+				
+				if(keys.pressedKeys["R"]){
+					document.location.reload(true);
 				}
 				
 				renderer.render(scene, camera);
-				camera.position.x = player.mesh.position.x + 100;
+				score.textContent = counter;
+				console.log(counter);
+				
 			};
 			function degToRad(angle){
 				return deg * Math.PI / 180;
@@ -109,8 +188,29 @@
 				angle = degToRad(angle);
 			}
 			
+			function lose(){
+				lost = true;
+				scene.remove(player.mesh);
+				player = null;	
+				restart.style.opacity = 1;
+				gameover.style.opacity = 1;
+			}
+			
+			
+			function init(){
+				player = new Player(scene);
+				player.init();
+				lost = false;
+				points = 0;
+				obstacles = [];
+				tiles = [];
+				window.setTimeout(timer, time);
+				restart.style.opacity = 0;
+				gameover.style.opacity = 0;
+				
+			}
+			init();
 			render();
 
-	</script>
-</body>
+	</script>	
 </html>

@@ -3,7 +3,7 @@ function Player(scene) {
 	this.scene = scene;
 	this.side = 32;
 	this.heightSmall = 24;
-	this.gravity = 0.25;
+	this.gravity = 0.4;
 	this.speed = -2.5;
 	this.collisionDistance = this.side/2;
 	this.onFloor = false;
@@ -145,7 +145,7 @@ Player.prototype.controls = function(){
 		if(!this.jumping){
 			this.jumping = true;
 			this.onFloor = false;
-			this.speed = 4.5;
+			this.speed = 5.5;
 		}
 	}
 	
@@ -166,13 +166,12 @@ Player.prototype.controls = function(){
 	else if (this.scale < 1 && !keys.pressedKeys[SMALL] ) {
 		this.scale += this.scaleSpeed;
 		this.side = 32;
-		this.mesh.position.y = 21;
 		this.collisionDistance = 16;
 	}
 }
 
 Player.prototype.lose = function(){
-	console.log("lose");
+	lose();
 }
 /*Entity.prototype.outsideScreen = function() {
     return (this.x > this.game.halfSurfaceWidth || this.x < -(this.game.halfSurfaceWidth) ||

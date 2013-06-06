@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		body {
+			font-family: Monospace;
+			background-color: #555;
+			margin: 0px;
+			overflow: hidden;
+		}
+		#gameover {
+			z-index: 3;
+			position: absolute;
+			top: 40%;
+			left: 50%;
+			width: 600px;
+			height: 100px;
+			margin: -100px 0 0 -300px;
+			font-family: 'Monotype', 'Consolas', 'Lucida console';
+			font-size: 300%;
+			color: rgb(155,0,200);
+			opacity: 0;
+		}
+		#restart {
+			z-index: 3;
+			position: absolute;
+			top: 55%;
+			left: 50%;
+			width: 650px;
+			height: 50px;
+			margin: -100px 0 0 -325px;
+			font-family: 'Monotype', 'Consolas', 'Lucida console';
+			font-size: 200%;
+			
+			color: rgb(255,0,255);
+			
+			opacity: 0;
+		}
+		
+		
+		#score {
+			position: absolute;
+			top: 5%;
+			left: 5%;
+			font-family: 'Monotype', 'Consolas', 'Lucida console';
+			font-size: 300%;
+			color: rgb(255,220,0);
+		}
+		
+		#container {
+			width: 600px;
+			height: 400px;
+			margin: auto;
+			
+		}
+		
+	</style>
+
+</head>
+<body>
+
+	<script src="three.min.js"></script>
+	<script src="requestAnimationFrame.js"></script>
+	<script src="Keys.js"></script>
+	<script src="Tile.js"></script>
+	<script src="Spike.js"></script>
+	<script src="Player.js"></script>
+
+<div id="gameover">
+<h1>
+	GAME OVER
+</h1>
+</div>
+
+<div id="restart">
+<h2>
+	Press 'R' to restart
+</h2>
+</div>
+
+<h2 id="score">
+	0
+</h2>
+</body>
+
+	<script type="text/javascript">
+		
+			var gameover = document.getElementById('gameover');
+			var restart = document.getElementById('restart');
+			var score = document.getElementById('score');
+			var counter = 0;
+			var WIDTH = 1024;
+			var HEIGHT =768;
+			// Global variables
+			var keys = new Keys();
+			window.onkeydown = function(e){
+				keys.onKeyDown(e);
+			}
+			window.onkeyup = function(e){
+				keys.onKeyUp(e);
+			}
+			var lost;
+			var tempRot = 0.05;
+			var cubeRotation = 90;
+			var toggle = true;
+			// Scene variables
+			var scene = new THREE.Scene();
+			var camera = new THREE.CombinedCamera( WIDTH / 2, HEIGHT / 2, 70, 1, 1000, - 500, 1000 );
+			//var cameraOrtho = new THREE.OrthographicCamera(0,window.innerWidth,0,window.innerHeigt, 1, 2000);
+			
+			camera.lookAt(scene.position);
+			camera.position.z = 350;
+			camera.position.y = 100;
+			
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize(WIDTH, HEIGHT);
+			document.body.appendChild(renderer.domElement);
+			var style = renderer.domElement.style;
+			style.position = "absolute";
+			style.left = "50%";
+			style.top = "50%";
+			style.marginTop = (-HEIGHT/2)+"px";
+			style.marginLeft = (-WIDTH/2)+"px";
+			
+			var geometry = new THREE.CubeGeometry(30,30,30,1,1,1);
+			var material = new THREE.MeshLambertMaterial({color: 0x555555});
+			var wireFrame = new THREE.MeshBasicMaterial({color: 0xffffff, 
+														wireframe: true,
+														wireframeLinewidth: 16});
+			var multiMaterial = [ material, wireFrame ];
+
+										
+			var piso = new THREE.SceneUtils.createMultiMaterialObject(
+					new THREE.CubeGeometry(1500,10,100,1,1,1),multiMaterial);
+			piso.position.x = 0;
+			scene.add(piso);
+
+			/*cone = new THREE.CylinderGeometry(0, 20,40,50,50, false);
+			var spike  = new THREE.Mesh(cone, material3);
+			spike.position.y = 20;
+			scene.add(spike);*/
+			
+			var cam_z_rot = 0.001;
+			var cam_y_rot = 0.0005;
+			var cam_x_rot = 0.0005;
+			
+			var rot_limit = 0.1;
+			var amountR = 1;
+			var amountG = 1;
+			var amountB = 1;
+			var r = 0;
+			var b = 125;
+			var g = 200;
+			var player;
+			
+			var tiles = [];
+			var obstacles = [];
+
+			var time = 250;
+			function timer(){
+				var tile = new Tile(scene);
+				tile.init();
+				
+				var random = Math.random();
+				
+				if( random < 0.10 ){
+					time = 400;
+				}
+				else if( random < 0.35 ){
+					time = 450;
+				}
+				else if( random < 0.50 ){
+					time = 500;
+				}
+				
+				else if (random < 0.65 ){
+					time = 530;
+				}
+				
+				else if (random < 0.75 ){
+				
+					time = 570;
+				}
+				else if (random < 0.85 ){
+					time = 600;
+				}
+				
+				else if (random < 0.92 ){
+					time = 650;
+				}
+				
+				else if( random < 0.97 ){
+					time = 700
+				}
+				
+				else {
+					time = 750;
+				}
+				tiles.push(tile);
+				obstacles.push(tile.mesh);
+				window.setTimeout(timer, time);
+				
+			}
+			
+
+			var render = function () {
+				
+				requestAnimFrame(render);
+				if(!lost){
+					camera.position.x = player.mesh.position.x + 120;
+					player.update();
+
+					camera.rotation.z += cam_z_rot;
+					camera.rotation.y += cam_y_rot;
+					
+					counter++;
+				}
+				
+				if( Math.abs(camera.rotation.z) > rot_limit ){
+					cam_z_rot = -cam_z_rot;
+				}
+				if( Math.abs(camera.rotation.y) > rot_limit ){
+					cam_y_rot = -cam_y_rot;
+				}
+				
+				if( Math.abs(camera.rotation.x) > rot_limit ){
+					cam_x_rot = -cam_x_rot;
+				}
+
+
+				
+				if ( r >= 255  || r <= 0 ){
+					amountR = -amountR;
+				}
+				if ( g >= 255  || g <= 0 ){
+					amountG = -amountG;
+				}
+				if ( b >= 255  || b <= 0 ){
+					amountB = -amountB;
+				}
+				
+				r+= amountR;
+				g+= amountG;
+				b+= amountB;
+				var color = "rgb("+r+","+g+","+b+")";
+				//console.log(color);
+				style.backgroundColor = color;
+				
+				
+				for(var i=0; i<tiles.length; i++){
+					tiles[i].update();					
+				}
+				
+				if(keys.pressedKeys["R"]){
+					document.location.reload(true);
+				}
+				
+				renderer.render(scene, camera);
+				score.textContent = counter;
+				
+			};
+			function degToRad(angle){
+				return deg * Math.PI / 180;
+			}
+			function rotateAroundScene(angle){
+				angle = degToRad(angle);
+			}
+			
+			function lose(){
+				lost = true;
+				scene.remove(player.mesh);
+				player = null;	
+				restart.style.opacity = 1;
+				gameover.style.opacity = 1;
+			}
+			
+			
+			function init(){
+				player = new Player(scene);
+				player.init();
+				lost = false;
+				points = 0;
+				obstacles = [];
+				tiles = [];
+				window.setTimeout(timer, time);
+				restart.style.opacity = 0;
+				gameover.style.opacity = 0;
+				render();
+			}
+			
+			init();
+			
+			
+
+	</script>	
+</html>

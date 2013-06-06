@@ -145,17 +145,17 @@ Player.prototype.controls = function(){
 		if(!this.jumping){
 			this.jumping = true;
 			this.onFloor = false;
-			this.speed = 5.5;
+			this.speed = 5;
 		}
 	}
 	
-	if(keys.pressedKeys[LEFT]){
+	/*if(keys.pressedKeys[LEFT]){
 		Tile.speed = Tile.slow;
 	}
 	
 	if(keys.pressedKeys[RIGHT]){
 		Tile.speed = Tile.fast;
-	}
+	}*/
 	
 	if(keys.pressedKeys[SMALL] && this.scale > 0.75 ){
 		this.scale -= this.scaleSpeed;
